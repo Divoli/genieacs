@@ -36,8 +36,14 @@ export async function connect(): Promise<void> {
   mongoCollection = db.collection("cache");
   await mongoCollection.createIndex({ expire: 1 }, { expireAfterSeconds: 0 });
   const now = Date.now();
-  const res = await db.command({ hostInfo: 1 });
-  mongoTimeOffset = res.system.currentTime.getTime() - now;
+  
+  if (config.get("DOCUMENTDB_COMPATIBILITY")) {
+    const res = await db.command({ serverStatus: 1 });
+    mongoTimeOffset = res.localTime.getTime() - now;
+  } else {
+    const res = await db.command({ hostInfo: 1 });
+    mongoTimeOffset = res.system.currentTime.getTime() - now;
+  }
 }
 
 export async function disconnect(): Promise<void> {
