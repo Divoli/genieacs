@@ -43,18 +43,26 @@ function ensureIndexes(client): void {
 
 function getClient(): Promise<MongoClient> {
   if (!clientPromise) {
-    clientPromise = new Promise((resolve, reject) => {
-      const CONNECTION_URL = "" + config.get("MONGODB_CONNECTION_URL");
-      MongoClient.connect(
-        CONNECTION_URL,
-        { useNewUrlParser: true, useUnifiedTopology: true },
-        (err, client) => {
-          if (err) return void reject(err);
-          ensureIndexes(client);
-          resolve(client);
-        }
-      );
-    });
+    const dbOpts = { 
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      sslValidate: null,
+      sslCA: null,
+    }
+  
+    if (config.get("DOCUMENTDB_COMPATIBILITY") && "" + config.get("DOCUMENTDB_CA_CERT_PATH") !== "") {
+      console.log("Using DocumentDB compatible CA cert validation")
+      var ca = [require('fs').readFileSync(config.get("DOCUMENTDB_CA_CERT_PATH"))];
+      dbOpts.sslValidate = true
+      dbOpts.sslCA = ca
+    }
+
+    clientPromise = new Promise((resolve, reject) =>  {
+      MongoClient.connect("" + config.get("MONGODB_CONNECTION_URL"), dbOpts, (err, client) => {
+        if (err) return void reject(err);
+        ensureIndexes(client);
+        resolve(client);
+      })});
   }
 
   return clientPromise;

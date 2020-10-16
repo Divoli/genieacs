@@ -27,11 +27,23 @@ let mongoCollection: Collection;
 let mongoTimeOffset = 0;
 
 export async function connect(): Promise<void> {
-  const MONGODB_CONNECTION_URL = "" + config.get("MONGODB_CONNECTION_URL");
-  clientPromise = MongoClient.connect(MONGODB_CONNECTION_URL, {
+  const dbOpts = { 
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  });
+    sslValidate: null,
+    sslCA: null,
+  }
+
+  if (get("DOCUMENTDB_COMPATIBILITY") && "" + get("DOCUMENTDB_CA_CERT_PATH") !== "") {
+    console.log("Using DocumentDB compatible CA cert validation")
+    var ca = [require('fs').readFileSync(get("DOCUMENTDB_CA_CERT_PATH"))];
+    dbOpts.sslValidate = true
+    dbOpts.sslCA = ca
+    // mongodb://genieacs:<pass>@docdb-genieacs.cluster-ctbdwjhl7vup.ap-southeast-2.docdb.amazonaws.com:27017/?ssl=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false
+  }
+
+  clientPromise = MongoClient.connect("" + get("MONGODB_CONNECTION_URL"), dbOpts);
+
   const db = (await clientPromise).db();
   mongoCollection = db.collection("cache");
   await mongoCollection.createIndex({ expire: 1 }, { expireAfterSeconds: 0 });
