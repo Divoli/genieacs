@@ -66,6 +66,7 @@ export async function connect(): Promise<void> {
     dbOpts["sslCA"] = ca
   }
 
+  console.log(dbOpts);
   clientPromise = MongoClient.connect("" + get("MONGODB_CONNECTION_URL"), dbOpts);
   client = await clientPromise;
   const db = client.db();
