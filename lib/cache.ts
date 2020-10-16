@@ -39,9 +39,13 @@ export async function connect(): Promise<void> {
   
   if (config.get("DOCUMENTDB_COMPATIBILITY")) {
     const res = await db.command({ serverStatus: 1 });
+    console.log("Using DocumentDB")
+    console.log(res);
     mongoTimeOffset = res.localTime.getTime() - now;
   } else {
     const res = await db.command({ hostInfo: 1 });
+    console.log("Using Mongo")
+    console.log(res);
     mongoTimeOffset = res.system.currentTime.getTime() - now;
   }
 }
