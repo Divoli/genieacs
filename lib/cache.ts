@@ -39,7 +39,6 @@ export async function connect(): Promise<void> {
     var ca = [require('fs').readFileSync(get("DOCUMENTDB_CA_CERT_PATH"))];
     dbOpts.sslValidate = true
     dbOpts.sslCA = ca
-    // mongodb://genieacs:<pass>@docdb-genieacs.cluster-ctbdwjhl7vup.ap-southeast-2.docdb.amazonaws.com:27017/?ssl=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false
   }
 
   clientPromise = MongoClient.connect("" + get("MONGODB_CONNECTION_URL"), dbOpts);
