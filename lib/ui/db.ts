@@ -46,15 +46,13 @@ function getClient(): Promise<MongoClient> {
     const dbOpts = { 
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      sslValidate: null,
-      sslCA: null,
     }
   
     if (config.get("DOCUMENTDB_COMPATIBILITY") && "" + config.get("DOCUMENTDB_CA_CERT_PATH") !== "") {
       console.log("Using DocumentDB compatible CA cert validation")
       var ca = [require('fs').readFileSync(config.get("DOCUMENTDB_CA_CERT_PATH"))];
-      dbOpts.sslValidate = true
-      dbOpts.sslCA = ca
+      dbOpts["sslValidate"] = true
+      dbOpts["sslCA"] = ca
     }
 
     clientPromise = new Promise((resolve, reject) =>  {

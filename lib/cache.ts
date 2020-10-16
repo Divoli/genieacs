@@ -30,15 +30,13 @@ export async function connect(): Promise<void> {
   const dbOpts = { 
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    sslValidate: null,
-    sslCA: null,
   }
 
   if (get("DOCUMENTDB_COMPATIBILITY") && "" + get("DOCUMENTDB_CA_CERT_PATH") !== "") {
     console.log("Using DocumentDB compatible CA cert validation")
     var ca = [require('fs').readFileSync(get("DOCUMENTDB_CA_CERT_PATH"))];
-    dbOpts.sslValidate = true
-    dbOpts.sslCA = ca
+    dbOpts["sslValidate"] = true
+    dbOpts["sslCA"] = ca
   }
 
   clientPromise = MongoClient.connect("" + get("MONGODB_CONNECTION_URL"), dbOpts);
