@@ -226,7 +226,7 @@ async function generateToolsJs(): Promise<void> {
       format: "cjs",
       preferConst: true,
       sourcemap: "inline",
-      sourcemapExcludeSources: true,
+      sourcemapExcludeSources: false,
       banner: "#!/usr/bin/env node",
       file: outputFile,
     });
@@ -282,7 +282,7 @@ async function generateBackendJs(): Promise<void> {
       format: "cjs",
       preferConst: true,
       sourcemap: "inline",
-      sourcemapExcludeSources: true,
+      sourcemapExcludeSources: false,
       banner: "#!/usr/bin/env node",
       file: outputFile,
     });
@@ -336,7 +336,7 @@ async function generateFrontendJs(): Promise<void> {
     preferConst: true,
     format: "es",
     sourcemap: "inline",
-    sourcemapExcludeSources: true,
+    sourcemapExcludeSources: false,
     file: outputFile,
   });
 
