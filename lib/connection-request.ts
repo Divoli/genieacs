@@ -76,7 +76,9 @@ function httpGet(
           debug.incomingHttpResponse(res, deviceId, null);
         }
       })
-      .on("error", (err) => {
+      .on("error", (err: Error & { code: string }) => {
+        console.log(err);
+        console.log(options);
         req.abort();
         reject(new Error("Device is offline"));
         if (_debug) debug.outgoingHttpRequestError(req, deviceId, options, err);
@@ -104,7 +106,9 @@ export async function httpConnectionRequest(
 
   options.agent = new http.Agent({
     maxSockets: 1,
-    keepAlive: true,
+    keepAlive:
+      typeof process.env.CONNECTION_REQUEST_KEEP_ALIVE === "undefined" ||
+      process.env.CONNECTION_REQUEST_KEEP_ALIVE === "true",
   });
 
   let authHeader: Record<string, string>;
@@ -147,12 +151,29 @@ export async function httpConnectionRequest(
       }
     }
 
+    if (process.env.CONNECTION_REQUEST_PROXY_HOST) {
+      opts = {
+        ...opts,
+        headers: {
+          ...opts.headers,
+          "X-ACS-DEST-HOST": opts.host,
+          "X-ACS-DEST-PROTOCOL": opts.protocol,
+        },
+        host: process.env.CONNECTION_REQUEST_PROXY_HOST,
+        hostname: process.env.CONNECTION_REQUEST_PROXY_HOST,
+        port: process.env.CONNECTION_REQUEST_PROXY_PORT || opts.port,
+        protocol:
+          process.env.CONNECTION_REQUEST_PROXY_PROTOCOL || opts.protocol,
+      };
+    }
+
     let res = await httpGet(opts, timeout, _debug, deviceId);
 
     // Workaround for some devices unexpectedly closing the connection
-    if (res.statusCode === 0 && authHeader)
+    if (res.statusCode === 0 && authHeader) {
       res = await httpGet(opts, timeout, _debug, deviceId);
-    if (res.statusCode === 0) throw new Error("Device is offline");
+    }
+    if (res.statusCode === 0) throw new Error("Device is offline!");
     if (res.statusCode === 200 || res.statusCode === 204) return;
 
     if (res.statusCode === 401 && res.headers["www-authenticate"]) {
