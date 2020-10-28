@@ -29,6 +29,7 @@
   --color3: #f2ebd5;
   --color4: #046380;
   --color5: #002f2f;
+  --color6: #f9f9f9;
 
   --fade: 0.2s;
 
@@ -38,6 +39,10 @@
   --status-green: hsl(125, 80%, 80%);
   --status-gray: hsl(58, 3%, 80%);
   --status-yellow: hsl(46, 79%, 80%);
+}
+
+body {
+  background: var(--color6);
 }
 
 body,
@@ -327,8 +332,12 @@ body {
 
 #content {
   flex-grow: 1;
-  margin: 10px;
+  margin: 32px 64px;
   min-height: 250px;
+}
+
+button {
+  cursor: pointer;
 }
 
 table.table {
