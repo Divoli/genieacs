@@ -166,6 +166,7 @@ export async function connectionRequest(
       deviceId
     );
   } catch (err) {
+    console.error(err);
     if (!udpProm) throw err;
     await udpProm;
   }

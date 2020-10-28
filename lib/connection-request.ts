@@ -170,9 +170,8 @@ export async function httpConnectionRequest(
     let res = await httpGet(opts, timeout, _debug, deviceId);
 
     // Workaround for some devices unexpectedly closing the connection
-    if (res.statusCode === 0 && authHeader) {
+    if (res.statusCode === 0 && authHeader)
       res = await httpGet(opts, timeout, _debug, deviceId);
-    }
     if (res.statusCode === 0) throw new Error("Device is offline!");
     if (res.statusCode === 200 || res.statusCode === 204) return;
 
