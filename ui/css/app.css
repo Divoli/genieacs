@@ -19,27 +19,7 @@
 
 @import "normalize.css";
 @import "codemirror/lib/codemirror.css";
-
-:root {
-  --base-font-size: 13px;
-  --base-line-height: 16px;
-
-  --color1: #ebe0bf;
-  --color2: #b9b098;
-  --color3: #f2ebd5;
-  --color4: #046380;
-  --color5: #002f2f;
-  --color6: #f9f9f9;
-
-  --fade: 0.2s;
-
-  --disabled: #666;
-
-  --status-red: hsl(0, 80%, 80%);
-  --status-green: hsl(125, 80%, 80%);
-  --status-gray: hsl(58, 3%, 80%);
-  --status-yellow: hsl(46, 79%, 80%);
-}
+@import "variables.css";
 
 body {
   background: var(--color6);
@@ -101,6 +81,7 @@ body {
   display: flex;
   overflow-x: auto;
   overflow-y: auto;
+  margin: 32px 64px;
 }
 
 #header {
@@ -332,7 +313,6 @@ body {
 
 #content {
   flex-grow: 1;
-  margin: 32px 64px;
   min-height: 250px;
 }
 
