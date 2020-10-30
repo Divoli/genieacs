@@ -33,6 +33,7 @@ import {
 import { Expression, Task } from "./types";
 import { flattenDevice } from "./mongodb-functions";
 import { evaluate } from "./common/expression";
+import * as logger from "./logger";
 
 export async function connectionRequest(
   deviceId: string,
@@ -166,7 +167,10 @@ export async function connectionRequest(
       deviceId
     );
   } catch (err) {
-    console.error(err);
+    logger.error({
+      message: "Connection request error",
+      error: err.message.trim(),
+    });
     if (!udpProm) throw err;
     await udpProm;
   }

@@ -110,7 +110,10 @@ export async function postTasks(
   try {
     await connectionRequest(deviceId, device);
   } catch (err) {
-    console.error(err);
+    logger.error({
+      message: "Failed to request connection",
+      error: err.message.trim(),
+    });
     await Promise.all(statuses.map((t) => db.deleteTask(new ObjectID(t._id))));
     return {
       connectionRequest: err.message,

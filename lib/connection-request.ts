@@ -26,6 +26,7 @@ import { Expression } from "./types";
 import * as auth from "./auth";
 import * as extensions from "./extensions";
 import * as debug from "./debug";
+import * as logger from "./logger";
 
 async function extractAuth(
   exp: Expression,
@@ -77,8 +78,10 @@ function httpGet(
         }
       })
       .on("error", (err: Error & { code: string }) => {
-        console.log(err);
-        console.log(options);
+        logger.error({
+          message: "Failed to execute get req",
+          error: err.message.trim(),
+        });
         req.abort();
         reject(new Error("Device is offline"));
         if (_debug) debug.outgoingHttpRequestError(req, deviceId, options, err);

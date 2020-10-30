@@ -19,6 +19,7 @@
 
 import { MongoClient, Collection } from "mongodb";
 import * as config from "./config";
+import * as logger from "./logger";
 
 const MAX_CACHE_TTL = +config.get("MAX_CACHE_TTL");
 
@@ -36,16 +37,14 @@ export async function connect(): Promise<void> {
   mongoCollection = db.collection("cache");
   await mongoCollection.createIndex({ expire: 1 }, { expireAfterSeconds: 0 });
   const now = Date.now();
-  
+
   if (config.get("DOCUMENTDB_COMPATIBILITY")) {
     const res = await db.command({ serverStatus: 1 });
-    console.log("Using DocumentDB")
-    console.log(res);
+    logger.info({ message: "Using DocumentDB" });
     mongoTimeOffset = res.localTime.getTime() - now;
   } else {
     const res = await db.command({ hostInfo: 1 });
-    console.log("Using Mongo")
-    console.log(res);
+    logger.info({ message: "Using mongo" });
     mongoTimeOffset = res.system.currentTime.getTime() - now;
   }
 }
