@@ -102,12 +102,7 @@ const component: ClosureComponent = (): Component => {
 
       const yamlString =
         config && Object.values(config).length
-          ? yaml.stringify(config, {
-              schema: "failsafe",
-              tags: (args) => {
-                return args;
-              },
-            })
+          ? yaml.stringify(config, { schema: "failsafe" })
           : "";
 
       const attrs = {
@@ -120,6 +115,7 @@ const component: ClosureComponent = (): Component => {
         },
         onChange: (value) => {
           vnode.state["updatedYaml"] = value;
+          vnode.state["modified"] = true;
         },
       };
 
