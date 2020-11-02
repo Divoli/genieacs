@@ -165,7 +165,6 @@ for (const [resource, flags] of Object.entries(resources)) {
 
   router.get(`/${resource}`, async (ctx) => {
     const authorizer: Authorizer = ctx.state.authorizer;
-    logger.accessInfo({ message: "1" });
     const options: QueryOptions = {};
     let filter: Expression = authorizer.getFilter(resource, 2);
     if (ctx.request.query.filter)
@@ -179,7 +178,6 @@ for (const [resource, flags] of Object.entries(resources)) {
         .split(",")
         .reduce((obj, k) => Object.assign(obj, { [k]: 1 }), {});
     }
-    logger.accessInfo({ message: "2" });
 
     const log = {
       message: `Query ${resource}`,
@@ -195,7 +193,6 @@ for (const [resource, flags] of Object.entries(resources)) {
       logUnauthorizedWarning(log);
       return void (ctx.status = 403);
     }
-    logger.accessInfo({ message: "3" });
 
     // Exclude temporary tasks and faults
     if (resource === "tasks" || resource === "faults") {
@@ -206,20 +203,17 @@ for (const [resource, flags] of Object.entries(resources)) {
       ]);
     }
 
-    logger.accessInfo({ message: "4" });
     ctx.body = new stream.PassThrough();
     ctx.type = "application/json";
 
     let c = 0;
     ctx.body.write("[\n");
-    logger.accessInfo({ message: "5" });
-    await db.query(resource, filter, options);
-    logger.accessInfo({ message: "6" });
     await db.query(resource, filter, options, (obj) => {
       ctx.body.write((c++ ? "," : "") + JSON.stringify(obj) + "\n");
     });
     ctx.body.end("]");
-    logger.accessInfo({ message: "7" });
+    const result = await db.query(resource, filter, options);
+    ctx.body = JSON.stringify(result);
 
     logger.accessInfo(log);
   });
