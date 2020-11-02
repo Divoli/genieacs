@@ -79,6 +79,7 @@ const options = {
   FORWARDED_HEADER: { type: "string", default: "" },
 
   DOCUMENTDB_COMPATIBILITY: { type: "bool", default: false },
+  DISABLE_PING: { type: "bool", default: false },
   DOWNLOAD_TIMEOUT: { type: "int", default: 3600 },
   EXT_TIMEOUT: { type: "int", default: 3000 },
   MAX_CACHE_TTL: { type: "int", default: 86400 },

@@ -19,6 +19,7 @@
 
 import { platform } from "os";
 import { exec } from "child_process";
+import * as config from "./config";
 
 export interface PingResult {
   packetsTransmitted: number;
@@ -34,6 +35,11 @@ export function ping(
   host: string,
   callback: (err: Error, res?: PingResult, stdout?: string) => void
 ): void {
+  if (config.get("DISABLE_PING")) {
+    callback(new Error("Ping is disabled"), null, null);
+    return;
+  }
+
   let cmd: string, parseRegExp1: RegExp, parseRegExp2: RegExp;
   switch (platform()) {
     case "linux":
