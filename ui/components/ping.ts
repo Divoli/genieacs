@@ -64,8 +64,10 @@ const component: ClosureComponent = (vn): Component => {
 
       let h;
       if (param && param.value) {
-        const url = new URL(param.value[0]);
-        h = url.hostname;
+        try {
+          const url = new URL(param.value[0]);
+          h = url.hostname;
+        } catch (e) {}
       }
 
       if (host !== h) {

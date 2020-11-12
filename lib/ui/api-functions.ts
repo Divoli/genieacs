@@ -29,6 +29,7 @@ import {
   deleteDevice,
 } from "../api-functions";
 import { Task } from "../types";
+import * as logger from "../logger";
 
 async function deleteFault(id): Promise<void> {
   const deviceId = id.split(":", 1)[0];
@@ -95,6 +96,10 @@ export async function postTasks(
   timeout: number,
   device: Record<string, { value?: [boolean | number | string, string] }>
 ): Promise<{ connectionRequest: string; tasks: any[] }> {
+  logger.info({
+    message: `Posting tasks for ${deviceId} with timeout ${timeout}`,
+  });
+
   for (const task of tasks) {
     delete task._id;
     task["device"] = deviceId;
@@ -110,6 +115,10 @@ export async function postTasks(
   try {
     await connectionRequest(deviceId, device);
   } catch (err) {
+    logger.error({
+      message: "Failed to request connection",
+      error: err.message.trim(),
+    });
     await Promise.all(statuses.map((t) => db.deleteTask(new ObjectID(t._id))));
     return {
       connectionRequest: err.message,

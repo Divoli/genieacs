@@ -212,6 +212,8 @@ for (const [resource, flags] of Object.entries(resources)) {
       ctx.body.write((c++ ? "," : "") + JSON.stringify(obj) + "\n");
     });
     ctx.body.end("]");
+    const result = await db.query(resource, filter, options);
+    ctx.body = JSON.stringify(result);
 
     logger.accessInfo(log);
   });
